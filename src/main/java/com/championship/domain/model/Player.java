@@ -2,7 +2,6 @@ package com.championship.domain.model;
 
 import java.time.LocalDate;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -12,21 +11,22 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-@Entity 
 @Getter @Setter
 @ToString
+@Entity 
 public class Player {
 
   @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer id;
 
-  @NotBlank @Size(min = 2, max = 20)
+  @NotBlank @Size(min = 2, max = 45)
+  @Column(name = "_name")
   private String name;
 
-  @NotNull @Max(value = 10)
+  @NotNull
   private LocalDate birth;
 
-  @NotBlank @Size(max = 10)
+  @NotBlank @Size(max = 15)
   private String gender;
   
   @NotNull @Positive @Min(value = (long) 1.2)

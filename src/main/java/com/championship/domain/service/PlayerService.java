@@ -42,5 +42,9 @@ public Player save(Player player){
 public void removeBy(Integer id){
   repository.deleteById(id);
 }
- 
+
+public boolean playerDoesntExist(Integer id) {
+  return !repository.existsById(id);
+}
+
 }
