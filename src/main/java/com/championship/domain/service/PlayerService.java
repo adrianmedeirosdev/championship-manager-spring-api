@@ -14,37 +14,37 @@ import jakarta.transaction.Transactional;
 @Service
 public class PlayerService {
 
-  private final PlayerRepository repository;
+  private final PlayerRepository playerRepository;
 
   @Autowired
   public PlayerService(PlayerRepository repository) {
-    this.repository = repository;
+    this.playerRepository = repository;
   }
 
 public List<Player> all(){
-  return repository.findAll();
+  return playerRepository.findAll();
 }
 
 public Optional<Player> findBy(Integer id){
-    return repository.findById(id);
+    return playerRepository.findById(id);
 }
 
 public List<Player> findBy(String name){
-  return repository.findByNameContaining(name);
+  return playerRepository.findByNameContaining(name);
 }
 
 @Transactional
 public Player save(Player player){
-  return repository.save(player);
+  return playerRepository.save(player);
 }
 
 @Transactional
 public void removeBy(Integer id){
-  repository.deleteById(id);
+  playerRepository.deleteById(id);
 }
 
-public boolean playerDoesntExist(Integer id) {
-  return !repository.existsById(id);
+public boolean playerDoesNotExist(Integer id) {
+  return !playerRepository.existsById(id);
 }
 
 }

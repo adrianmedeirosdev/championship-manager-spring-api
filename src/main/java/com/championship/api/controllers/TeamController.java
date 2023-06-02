@@ -16,63 +16,62 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.championship.domain.model.Player;
-import com.championship.domain.service.PlayerService;
+import com.championship.domain.model.Team;
+import com.championship.domain.service.TeamService;
 
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/players")
-public class PlayerController {
-  
-  private final PlayerService service;
+@RequestMapping("/teams")
+public class TeamController {
+  public final TeamService teamService;
 
   @Autowired
-  public PlayerController(PlayerService playerService) {
-    this.service = playerService;
+  public TeamController(TeamService teamService) {
+    this.teamService = teamService;
   }
 
   @GetMapping
-  public List<Player> list(String name) {
-    if (name == null) {
-      return service.all();
-    } else {
-      return service.findBy(name);
+  public List<Team> list(String name){
+    if(name == null){
+      return teamService.all();
+    }else{
+      return teamService.findBy(name);
     }
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<Player> findBy(@PathVariable Integer id) {
-    return service.findBy(id)
+  public ResponseEntity<Team> findBy(@PathVariable Integer id) {
+    return teamService.findBy(id)
         .map(ResponseEntity::ok)
         .orElse(ResponseEntity.notFound().build());
   }
 
   @PostMapping
-  public ResponseEntity<Player> create(@Valid @RequestBody Player player, UriComponentsBuilder builder){
-    final Player savedPlayer = service.save(player);
+  public ResponseEntity<Team> create(@Valid @RequestBody Team team, UriComponentsBuilder builder){
+    final Team savedTeam = teamService.save(team);
     final URI uri = builder
-    .path("/players/{id}")
-    .buildAndExpand(savedPlayer.getId()).toUri();
-    return ResponseEntity.created(uri).body(savedPlayer); 
+    .path("/teams/{id}")
+    .buildAndExpand(savedTeam.getId()).toUri();
+    return ResponseEntity.created(uri).body(savedTeam); 
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<Player> update(@PathVariable Integer id, @Valid @RequestBody Player player){
-    if(service.playerDoesNotExist(id)){
+  public ResponseEntity<Team> update(@PathVariable Integer id, @Valid @RequestBody Team team){
+    if(teamService.teamDoesNotExist(id)){
       return ResponseEntity.notFound().build();
     } else {
-      player.setId(id);
-      Player updatedPlayer = service.save(player);
-      return ResponseEntity.ok(updatedPlayer);    
+      team.setId(id);
+      Team updatedTeam = teamService.save(team);
+      return ResponseEntity.ok(updatedTeam);    
     }
   }
 
   @DeleteMapping("/{id}")
     public ResponseEntity<?> remover(@PathVariable Integer id) {
-        Optional<Player> optional = service.findBy(id );
+        Optional<Team> optional = teamService.findBy(id );
         if (optional.isPresent()) {
-            service.removeBy(id);
+            teamService.removeBy(id);
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();
