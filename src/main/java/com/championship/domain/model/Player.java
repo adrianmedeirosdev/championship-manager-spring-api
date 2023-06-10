@@ -7,15 +7,16 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 @Getter @Setter
-@ToString
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity 
 public class Player {
 
+  @EqualsAndHashCode.Include
   @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer id;
 
@@ -31,5 +32,8 @@ public class Player {
   
   @NotNull @Positive @Min(value = (long) 1.2)
   private float height;
+
+  @NotNull
+  private Team team;
 
 }

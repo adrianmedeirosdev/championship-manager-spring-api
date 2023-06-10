@@ -2,15 +2,18 @@ package com.championship.domain.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 @Getter @Setter
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
-@ToString
 public class Stadium {
+  
+  @EqualsAndHashCode.Include
   @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer id;
 
@@ -19,4 +22,8 @@ public class Stadium {
 
   @NotBlank @Size(min = 50, max = 450)
   private String address;
+
+  @NotNull
+  private Team team;
+
 }

@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.championship.domain.exception.BusinessException;
+
 @RestControllerAdvice
 public class ApiExceptionHandler {
   
@@ -35,6 +37,13 @@ public class ApiExceptionHandler {
     });
 
     return errors;
+  }
+
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ExceptionHandler(BusinessException.class)
+  public ValidationErrors handleBusiness(BusinessException ex ) {
+      ValidationErrors erros = new ValidationErrors(LocalDateTime.now(), ex.getMessage());
+      return erros;
   }
 
 }
