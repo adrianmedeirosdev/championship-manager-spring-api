@@ -33,22 +33,16 @@ public class TeamService {
     return teamRepository.findByNameContaining(name);
   }
 
+
   @Transactional
   public Team save(Team team){
     return teamRepository.save(team);
   }
 
-  @Transactional
-  public void removeBy(Integer id){
-    teamRepository.deleteById(id);
-  }
-
+  
   public boolean teamDoesNotExist(Integer id){
     return !teamRepository.existsById(id);
   }
-
-
-
 
 
 }

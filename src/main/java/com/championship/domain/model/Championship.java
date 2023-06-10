@@ -1,5 +1,6 @@
 package com.championship.domain.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.*;
@@ -26,9 +27,15 @@ public class Championship {
   private String name;
   
   @NotNull
-  private List<Team> teams;
+  private List<Team> teams = new ArrayList<>();
 
   @NotNull
-  private List<Match> matches;
+  private List<Match> matches = new ArrayList<>();
+
+  public Team add(Team team){
+    this.getTeams().add(team);
+    return team;
+  }
+
 
 }

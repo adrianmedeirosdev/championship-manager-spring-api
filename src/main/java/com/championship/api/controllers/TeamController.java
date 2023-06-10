@@ -2,11 +2,9 @@ package com.championship.api.controllers;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -67,13 +65,4 @@ public class TeamController {
     }
   }
 
-  @DeleteMapping("/{id}")
-    public ResponseEntity<?> remover(@PathVariable Integer id) {
-        Optional<Team> optional = teamService.findBy(id );
-        if (optional.isPresent()) {
-            teamService.removeBy(id);
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.notFound().build();
-    }
 }

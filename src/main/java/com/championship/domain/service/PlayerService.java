@@ -38,10 +38,6 @@ public Player save(Player player){
   return playerRepository.save(player);
 }
 
-@Transactional
-public void removeBy(Integer id){
-  playerRepository.deleteById(id);
-}
 
 public boolean playerDoesNotExist(Integer id) {
   return !playerRepository.existsById(id);
