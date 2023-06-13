@@ -40,6 +40,9 @@ public class ChampionshipService {
     return championshipRepository.save(championship);
   }
 
+  public boolean championshipDoesNotExist(Integer id) {
+  return !championshipRepository.existsById(id);
+} 
 
 
 }

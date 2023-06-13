@@ -12,32 +12,33 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.championship.domain.model.Team;
-import com.championship.domain.service.AddTeamToChampionshipService;
-import com.championship.domain.service.FindTeamsOfAChampionshipService;
+import com.championship.domain.model.Player;
+import com.championship.domain.service.AddPlayerToATeamService;
+import com.championship.domain.service.FindPlayersOfATeamService;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("/championships/{id}/teams")
-public class ChampionshipTeamsController {
+@RequestMapping("/teams/{id}/players")
+public class TeamPlayersController {
 
   @Autowired
-  private final FindTeamsOfAChampionshipService findTeamsOfAChampionshipService;
-  private final AddTeamToChampionshipService addTeamToChampionshipService;
+  private final FindPlayersOfATeamService findPlayersOfATeamService;
+  private final AddPlayerToATeamService addPlayerToATeamService;
 
   @GetMapping
-  public List<Team> list(@PathVariable Integer championshId){
-    List<Team> teams = findTeamsOfAChampionshipService.findTeams(championshId);
-    return teams;
+  public List<Player> list(@PathVariable Integer teamId) {
+    List<Player> players = findPlayersOfATeamService.findPlayers(teamId);
+    return players;
   }
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
-  public Team add(@PathVariable Integer championshipId, @Valid @RequestBody Team team){
-    Team addedTeam = addTeamToChampionshipService.add(championshipId, team);
-    return addedTeam;
+  public Player add(@PathVariable Integer teamId, @Valid @RequestBody Player player) {
+    Player addedPlayer = addPlayerToATeamService.add(teamId, player);
+    return addedPlayer;
   }
+
 }

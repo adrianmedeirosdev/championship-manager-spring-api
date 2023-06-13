@@ -18,17 +18,16 @@ import com.championship.domain.model.Player;
 import com.championship.domain.service.PlayerService;
 
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 @RestController
 @RequestMapping("/players")
 public class PlayerController {
   
+  @Autowired
   private final PlayerService service;
 
-  @Autowired
-  public PlayerController(PlayerService playerService) {
-    this.service = playerService;
-  }
 
   @GetMapping
   public List<Player> list(String name) {

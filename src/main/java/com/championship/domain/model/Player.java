@@ -34,6 +34,7 @@ public class Player {
   private float height;
 
   @NotNull
+  @ManyToOne
   private Team team;
 
 }

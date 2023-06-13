@@ -1,13 +1,13 @@
 package com.championship.domain.model;
 
+import jakarta.persistence.Embeddable;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 @Getter
 @Setter
-@ToString
+@Embeddable
 public class Result {
 
   @NotNull 
@@ -16,5 +16,8 @@ public class Result {
   @NotNull
   public Integer awayGoals;
 
+  public boolean gameDraw(Integer homeGoals, Integer awayGoals){
+    return homeGoals == awayGoals ? true : false;
+  }
 
 }

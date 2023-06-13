@@ -1,5 +1,8 @@
 package com.championship.domain.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -14,13 +17,25 @@ import lombok.Setter;
 public class Team {
 
   @EqualsAndHashCode.Include
-  @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Id 
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer id;
 
   @NotBlank @Size(min = 2, max = 45)
+  @Column(name = "_name")
   private String name;
 
   @NotNull
+  @OneToOne
   private Stadium homeStadium;
+
+  @NotNull
+  @OneToMany(mappedBy = "team")
+  private List<Player> players = new ArrayList<>();
+
+  public Player add(Player player){
+    this.getPlayers().add(player);
+    return player;
+  }
 
 }

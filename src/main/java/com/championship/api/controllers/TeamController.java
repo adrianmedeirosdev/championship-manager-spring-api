@@ -18,16 +18,15 @@ import com.championship.domain.model.Team;
 import com.championship.domain.service.TeamService;
 
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 @RestController
 @RequestMapping("/teams")
 public class TeamController {
-  public final TeamService teamService;
-
+  
   @Autowired
-  public TeamController(TeamService teamService) {
-    this.teamService = teamService;
-  }
+  public final TeamService teamService;
 
   @GetMapping
   public List<Team> list(String name){
