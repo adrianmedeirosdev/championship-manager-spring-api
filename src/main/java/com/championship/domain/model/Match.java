@@ -33,11 +33,15 @@ public class Match {
   private LocalDate date;
 
   @NotNull
+  @Enumerated(EnumType.STRING)
+  private MatchStatus status;
+
+  @NotNull
   @ManyToOne
   private Championship championship;
 
-  @NotNull
   @Embedded
   private Result result;
+
 
 }

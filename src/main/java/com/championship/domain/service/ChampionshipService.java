@@ -11,12 +11,14 @@ import com.championship.domain.model.Championship;
 import com.championship.domain.repository.ChampionshipRepository;
 
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 @Service
 public class ChampionshipService {
 
   @Autowired
-  private ChampionshipRepository championshipRepository;
+  private final ChampionshipRepository championshipRepository;
 
   public List<Championship> all() {
     return championshipRepository.findAll();

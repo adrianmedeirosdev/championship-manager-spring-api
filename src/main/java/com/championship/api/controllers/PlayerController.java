@@ -4,6 +4,10 @@ import java.net.URI;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -24,44 +29,54 @@ import lombok.AllArgsConstructor;
 @RestController
 @RequestMapping("/players")
 public class PlayerController {
-  
-  @Autowired
-  private final PlayerService service;
 
+  @Autowired
+  private final PlayerService playerService;
 
   @GetMapping
   public List<Player> list(String name) {
     if (name == null) {
-      return service.all();
+      return playerService.all();
     } else {
-      return service.findBy(name);
+      return playerService.findBy(name);
     }
   }
 
   @GetMapping("/{id}")
   public ResponseEntity<Player> findBy(@PathVariable Integer id) {
-    return service.findBy(id)
+    return playerService.findBy(id)
         .map(ResponseEntity::ok)
         .orElse(ResponseEntity.notFound().build());
   }
 
+  @GetMapping("/page")
+  public Page<Player> list(@RequestParam(required = false) String name,
+      @PageableDefault(sort = "name", direction = Sort.Direction.ASC, page = 0, size = 4) Pageable pagination) {
+    if (name == null) {
+      return playerService.pagedSearch(pagination);
+
+    } else {
+      return playerService.findBy(name, pagination);
+    }
+  }
+
   @PostMapping
-  public ResponseEntity<Player> create(@Valid @RequestBody Player player, UriComponentsBuilder builder){
-    final Player savedPlayer = service.save(player);
+  public ResponseEntity<Player> create(@Valid @RequestBody Player player, UriComponentsBuilder builder) {
+    final Player savedPlayer = playerService.save(player);
     final URI uri = builder
-    .path("/players/{id}")
-    .buildAndExpand(savedPlayer.getId()).toUri();
-    return ResponseEntity.created(uri).body(savedPlayer); 
+        .path("/players/{id}")
+        .buildAndExpand(savedPlayer.getId()).toUri();
+    return ResponseEntity.created(uri).body(savedPlayer);
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<Player> update(@PathVariable Integer id, @Valid @RequestBody Player player){
-    if(service.playerDoesNotExist(id)){
+  public ResponseEntity<Player> update(@PathVariable Integer id, @Valid @RequestBody Player player) {
+    if (playerService.playerDoesNotExist(id)) {
       return ResponseEntity.notFound().build();
     } else {
       player.setId(id);
-      Player updatedPlayer = service.save(player);
-      return ResponseEntity.ok(updatedPlayer);    
+      Player updatedPlayer = playerService.save(player);
+      return ResponseEntity.ok(updatedPlayer);
     }
   }
 

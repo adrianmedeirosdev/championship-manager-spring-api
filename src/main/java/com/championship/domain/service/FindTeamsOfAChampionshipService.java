@@ -6,10 +6,14 @@ import org.springframework.stereotype.Service;
 
 import com.championship.domain.model.Team;
 
+import lombok.AllArgsConstructor;
+
+@AllArgsConstructor
 @Service
 public class FindTeamsOfAChampionshipService {
   
-  private ChampionshipService championshipService;
+  
+  private final ChampionshipService championshipService;
   
   public List<Team> findTeams(Integer championshipId) {
     return championshipService.find(championshipId)

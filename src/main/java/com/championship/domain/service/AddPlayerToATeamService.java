@@ -6,11 +6,13 @@ import com.championship.domain.model.Player;
 import com.championship.domain.model.Team;
 
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 @Service
 public class AddPlayerToATeamService {
   
-  private TeamService teamService; 
+  private final TeamService teamService; 
 
   @Transactional
   public Player add(Integer teamId, Player player){
