@@ -19,6 +19,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.championship.api.dto.input.PlayerRequest;
+import com.championship.api.dto.output.PlayerResponse;
+import com.championship.api.mapper.PlayerMapperAdapter;
 import com.championship.domain.model.Player;
 import com.championship.domain.service.PlayerService;
 
@@ -33,19 +36,21 @@ public class PlayerController {
   @Autowired
   private final PlayerService playerService;
 
+  private final PlayerMapperAdapter playerMapperAdapter;
+
   @GetMapping
-  public List<Player> list(String name) {
+  public List<PlayerResponse> list(String name) {
     if (name == null) {
-      return playerService.all();
+      return playerMapperAdapter.toCollectionModel(playerService.all());
     } else {
-      return playerService.findBy(name);
+      return playerMapperAdapter.toCollectionModel(playerService.findBy(name));
     }
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<Player> findBy(@PathVariable Integer id) {
+  public ResponseEntity<PlayerResponse> findBy(@PathVariable Integer id) {
     return playerService.findBy(id)
-        .map(ResponseEntity::ok)
+        .map(player -> ResponseEntity.ok(playerMapperAdapter.toModelResponse(player)))
         .orElse(ResponseEntity.notFound().build());
   }
 
@@ -54,29 +59,29 @@ public class PlayerController {
       @PageableDefault(sort = "name", direction = Sort.Direction.ASC, page = 0, size = 4) Pageable pagination) {
     if (name == null) {
       return playerService.pagedSearch(pagination);
-
     } else {
       return playerService.findBy(name, pagination);
     }
   }
 
   @PostMapping
-  public ResponseEntity<Player> create(@Valid @RequestBody Player player, UriComponentsBuilder builder) {
-    final Player savedPlayer = playerService.save(player);
+  public ResponseEntity<PlayerResponse> create(@Valid @RequestBody PlayerRequest playerRequest, UriComponentsBuilder builder) {
+    final Player savedPlayer = playerService.save(playerMapperAdapter.toEntity(playerRequest));
     final URI uri = builder
         .path("/players/{id}")
         .buildAndExpand(savedPlayer.getId()).toUri();
-    return ResponseEntity.created(uri).body(savedPlayer);
+    return ResponseEntity.created(uri).body(playerMapperAdapter.toModelResponse(savedPlayer));
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<Player> update(@PathVariable Integer id, @Valid @RequestBody Player player) {
+  public ResponseEntity<PlayerResponse> update(@PathVariable Integer id, @Valid @RequestBody PlayerRequest playerRequest) {
     if (playerService.playerDoesNotExist(id)) {
       return ResponseEntity.notFound().build();
     } else {
+      final Player player = playerMapperAdapter.toEntity(playerRequest);
       player.setId(id);
-      Player updatedPlayer = playerService.save(player);
-      return ResponseEntity.ok(updatedPlayer);
+      final Player updatedPlayer = playerService.save(playerMapperAdapter.toEntity(playerRequest));
+      return ResponseEntity.ok(playerMapperAdapter.toModelResponse(updatedPlayer));
     }
   }
 

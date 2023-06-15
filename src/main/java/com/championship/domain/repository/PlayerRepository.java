@@ -13,5 +13,5 @@ import com.championship.domain.model.Player;
 @Repository
 public interface PlayerRepository extends JpaRepository<Player, Integer> {
   public List<Player> findByNameContaining(String name);
-  public Page<Player> findByNomeContaining(@Param("name") String name, Pageable page);
+  public Page<Player> findByNameContaining(@Param("name") String name, Pageable page);
 }

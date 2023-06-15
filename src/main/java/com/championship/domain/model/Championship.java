@@ -21,7 +21,7 @@ public class Championship {
   private Integer id;
 
   @NotNull
-@Column(name = "_year")
+  @Column(name = "_year")
   private Integer year;
 
   @NotBlank @Size(min = 2, max = 45)
@@ -29,7 +29,7 @@ public class Championship {
   private String name;
   
   @NotNull
-  @ManyToMany
+  @ManyToMany(mappedBy = "championship")
   private List<Team> teams = new ArrayList<>();
 
   @NotNull

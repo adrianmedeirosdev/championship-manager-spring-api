@@ -39,7 +39,7 @@ public Page<Player> pagedSearch(Pageable page){
 }
 
 public Page<Player> findBy(String name, Pageable page) {
-        return playerRepository.findByNomeContaining(name, page);
+        return playerRepository.findByNameContaining(name, page);
     }
 
 @Transactional

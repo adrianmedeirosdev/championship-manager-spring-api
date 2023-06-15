@@ -28,10 +28,12 @@ public class Team {
   @NotNull
   @OneToOne
   private Stadium homeStadium;
-
-  @NotNull
+  
   @OneToMany(mappedBy = "team")
   private List<Player> players = new ArrayList<>();
+
+  @ManyToMany
+  private List<Championship> championships;
 
   public Player add(Player player){
     this.getPlayers().add(player);

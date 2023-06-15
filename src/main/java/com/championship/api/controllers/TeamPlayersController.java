@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.championship.api.dto.input.PlayerRequest;
+import com.championship.api.dto.output.PlayerResponse;
+import com.championship.api.mapper.PlayerMapperAdapter;
 import com.championship.domain.model.Player;
 import com.championship.domain.service.AddPlayerToATeamService;
 import com.championship.domain.service.FindPlayersOfATeamService;
@@ -28,16 +31,18 @@ public class TeamPlayersController {
   private final FindPlayersOfATeamService findPlayersOfATeamService;
   private final AddPlayerToATeamService addPlayerToATeamService;
 
+  private PlayerMapperAdapter playerMapperAdapter;
+
   @GetMapping
-  public List<Player> list(@PathVariable Integer teamId) {
-    List<Player> players = findPlayersOfATeamService.findPlayers(teamId);
+  public List<PlayerResponse> list(@PathVariable Integer teamId) {
+    List<PlayerResponse> players = playerMapperAdapter.toCollectionModel(findPlayersOfATeamService.findPlayers(teamId));
     return players;
   }
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
-  public Player add(@PathVariable Integer teamId, @Valid @RequestBody Player player) {
-    Player addedPlayer = addPlayerToATeamService.add(teamId, player);
+  public Player add(@PathVariable Integer teamId, @Valid @RequestBody PlayerRequest playerRequest) {
+    Player addedPlayer = addPlayerToATeamService.add(teamId, playerMapperAdapter.toEntity(playerRequest));
     return addedPlayer;
   }
 

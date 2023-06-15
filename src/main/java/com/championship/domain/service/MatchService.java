@@ -33,6 +33,9 @@ public class MatchService {
         .orElseThrow(() -> new EntityNotFoundException("Match not found."));
   }
 
+  public List<Match> findBy(String status) {
+    return matchRepository.findByStatusContaining(status);
+  }
 
   @Transactional
   public Match save(Match match) {

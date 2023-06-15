@@ -9,8 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.championship.domain.model.Match;
-import com.championship.domain.model.MatchStatus;
-import com.championship.domain.service.FindMatchesByStatusService;
+import com.championship.domain.service.MatchService;
 
 import lombok.AllArgsConstructor;
 
@@ -20,12 +19,12 @@ import lombok.AllArgsConstructor;
 public class ChampionshipMatchesController {
   
   @Autowired
-  private final FindMatchesByStatusService findMatchesByStatusService;
+  private final MatchService matchService;
 
 
   @GetMapping
-  public List<Match> list(@PathVariable MatchStatus matchStatus) {
-    List<Match> matches = findMatchesByStatusService.findBy(matchStatus);
+  public List<Match> list(@PathVariable String matchStatus) {
+    List<Match> matches = matchService.findBy(matchStatus);
     return matches;
   }
   
