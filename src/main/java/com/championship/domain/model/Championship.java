@@ -28,11 +28,11 @@ public class Championship {
   @Column(name = "_name")
   private String name;
   
-  @NotNull
-  @ManyToMany(mappedBy = "championship")
+  
+  @ManyToMany
   private List<Team> teams = new ArrayList<>();
 
-  @NotNull
+ 
   @OneToMany(mappedBy = "championship")
   private List<Match> matches = new ArrayList<>();
 

@@ -39,7 +39,7 @@ public class Match {
   @NotNull
   @ManyToOne
   private Championship championship;
-
+ 
   @Embedded
   private Result result;
 

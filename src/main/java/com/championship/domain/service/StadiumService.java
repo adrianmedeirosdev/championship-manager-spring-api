@@ -28,6 +28,10 @@ public Optional<Stadium> findBy(Integer id){
     return stadiumRepository.findById(id);
 }
 
+public List<Stadium> findBy(String name){
+  return stadiumRepository.findByNameContaining(name);
+}
+
 public Stadium find(Integer id) {
     return stadiumRepository.findById(id)
         .orElseThrow(() -> new EntityNotFoundException("Stadium not found."));

@@ -3,7 +3,6 @@ package com.championship.api.controllers;
 import java.net.URI;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,6 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.championship.api.dto.input.StadiumRequest;
+import com.championship.api.dto.output.StadiumResponse;
+import com.championship.api.mapper.StadiumMapperAdapter;
 import com.championship.domain.model.Stadium;
 import com.championship.domain.service.StadiumService;
 
@@ -25,38 +27,43 @@ import lombok.AllArgsConstructor;
 @RequestMapping("/stadiums")
 public class StadiumController {
   
-  @Autowired
   private final StadiumService stadiumService;
+  private final StadiumMapperAdapter stadiumMapperAdapter;
 
   @GetMapping
-  public List<Stadium> list(){
-      return stadiumService.all();
+  public List<StadiumResponse> list(String name){
+    if(name == null){
+      return stadiumMapperAdapter.toCollectionModel(stadiumService.all());
+
+    }else{
+      return stadiumMapperAdapter.toCollectionModel(stadiumService.findBy(name));
+    }
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<Stadium> findBy(@PathVariable Integer id) {
+  public ResponseEntity<StadiumResponse> findBy(@PathVariable Integer id) {
     return stadiumService.findBy(id)
-        .map(ResponseEntity::ok)
+        .map(stadium -> ResponseEntity.ok(stadiumMapperAdapter.toModelResponse(stadium)))
         .orElse(ResponseEntity.notFound().build());
   }
 
   @PostMapping
-  public ResponseEntity<Stadium> create(@Valid @RequestBody Stadium stadium, UriComponentsBuilder builder){
-    final Stadium savedStadium = stadiumService.save(stadium);
+  public ResponseEntity<StadiumResponse> create(@Valid @RequestBody StadiumRequest stadiumRequest, UriComponentsBuilder builder){
+    final Stadium savedStadium = stadiumService.save(stadiumMapperAdapter.toEntity(stadiumRequest));
     final URI uri = builder
     .path("/stadiums/{id}")
     .buildAndExpand(savedStadium.getId()).toUri();
-    return ResponseEntity.created(uri).body(savedStadium); 
+    return ResponseEntity.created(uri).body(stadiumMapperAdapter.toModelResponse(savedStadium)); 
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<Stadium> update(@PathVariable Integer id, @Valid @RequestBody Stadium stadium){
+  public ResponseEntity<StadiumResponse> update(@PathVariable Integer id, @Valid @RequestBody StadiumRequest stadiumRequest){
     if(stadiumService.stadiumDoesNotExist(id)){
       return ResponseEntity.notFound().build();
     } else {
-      stadium.setId(id);
-      Stadium updatedStadium = stadiumService.save(stadium);
-      return ResponseEntity.ok(updatedStadium);    
+      stadiumMapperAdapter.toEntity(stadiumRequest).setId(id);
+      Stadium updatedStadium = stadiumService.save(stadiumMapperAdapter.toEntity(stadiumRequest));
+      return ResponseEntity.ok(stadiumMapperAdapter.toModelResponse(updatedStadium));    
     }
   }
 

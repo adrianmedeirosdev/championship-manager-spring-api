@@ -5,7 +5,6 @@ import java.util.List;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -25,15 +24,14 @@ public class Team {
   @Column(name = "_name")
   private String name;
 
-  @NotNull
   @OneToOne
   private Stadium homeStadium;
   
-  @OneToMany(mappedBy = "team")
+  @OneToMany
   private List<Player> players = new ArrayList<>();
 
   @ManyToMany
-  private List<Championship> championships;
+  private List<Championship> championships = new ArrayList<>();
 
   public Player add(Player player){
     this.getPlayers().add(player);

@@ -25,5 +25,7 @@ public class Stadium {
   @Column(name = "_address")
   private String address;
 
+  @OneToOne
+  private Team team;
 
 }

@@ -33,7 +33,6 @@ public class Player {
   @NotNull @Positive @Min(value = (long) 1.2)
   private Float height;
   
-  @ManyToOne
-  private Team team;
+
 
 }

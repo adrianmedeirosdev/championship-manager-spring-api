@@ -1,6 +1,6 @@
 create table stadium (
   id integer not null auto_increment,
-  team_id integer not null,
+  team_id integer null,
   _name varchar(45) not null,
   _address varchar(450) not null,
   primary key (id)

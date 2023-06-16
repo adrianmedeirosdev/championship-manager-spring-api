@@ -15,6 +15,7 @@ public class FindPlayersOfATeamService {
   private final TeamService teamService;
 
   public List<Player> findPlayers(Integer teamId){
-    return teamService.find(teamId).getPlayers();
+    return teamService.find(teamId)
+    .getPlayers();
   }
 }

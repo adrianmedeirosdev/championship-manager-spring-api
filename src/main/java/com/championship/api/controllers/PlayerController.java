@@ -3,7 +3,6 @@ package com.championship.api.controllers;
 import java.net.URI;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -32,11 +31,11 @@ import lombok.AllArgsConstructor;
 @RestController
 @RequestMapping("/players")
 public class PlayerController {
-
-  @Autowired
+  
+  
   private final PlayerService playerService;
-
   private final PlayerMapperAdapter playerMapperAdapter;
+
 
   @GetMapping
   public List<PlayerResponse> list(String name) {
@@ -78,9 +77,11 @@ public class PlayerController {
     if (playerService.playerDoesNotExist(id)) {
       return ResponseEntity.notFound().build();
     } else {
-      final Player player = playerMapperAdapter.toEntity(playerRequest);
-      player.setId(id);
-      final Player updatedPlayer = playerService.save(playerMapperAdapter.toEntity(playerRequest));
+      Player playerToUpdate = playerService.find(id);
+      playerToUpdate.setName(playerRequest.getName());
+      playerToUpdate.setBirth(playerRequest.getBirth());
+      playerToUpdate.setHeight(playerRequest.getHeight());
+      final Player updatedPlayer = playerService.save(playerToUpdate);
       return ResponseEntity.ok(playerMapperAdapter.toModelResponse(updatedPlayer));
     }
   }
