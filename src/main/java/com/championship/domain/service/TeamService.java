@@ -11,16 +11,15 @@ import com.championship.domain.model.Team;
 import com.championship.domain.repository.TeamRepository;
 
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 @Service
 public class TeamService {
 
+  @Autowired
   public final TeamRepository teamRepository;
 
-  @Autowired
-  public TeamService(TeamRepository teamRepository) {
-    this.teamRepository = teamRepository;
-  }
 
   public List<Team> all() {
     return teamRepository.findAll();

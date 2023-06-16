@@ -6,11 +6,16 @@ import org.springframework.stereotype.Service;
 
 import com.championship.domain.model.Player;
 
+import lombok.AllArgsConstructor;
+
+@AllArgsConstructor
 @Service
 public class FindPlayersOfATeamService {
-  private TeamService teamService;
+  
+  private final TeamService teamService;
 
   public List<Player> findPlayers(Integer teamId){
-    return teamService.find(teamId).getPlayers();
+    return teamService.find(teamId)
+    .getPlayers();
   }
 }

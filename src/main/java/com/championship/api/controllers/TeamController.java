@@ -3,7 +3,6 @@ package com.championship.api.controllers;
 import java.net.URI;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,6 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.championship.api.dto.input.TeamRequest;
+import com.championship.api.dto.output.TeamResponse;
+import com.championship.api.mapper.TeamMapperAdapter;
 import com.championship.domain.model.Team;
 import com.championship.domain.service.TeamService;
 
@@ -25,42 +27,42 @@ import lombok.AllArgsConstructor;
 @RequestMapping("/teams")
 public class TeamController {
   
-  @Autowired
-  public final TeamService teamService;
+  private final TeamService teamService;
+  private final TeamMapperAdapter teamMapperAdapter;
 
   @GetMapping
-  public List<Team> list(String name){
+  public List<TeamResponse> list(String name){
     if(name == null){
-      return teamService.all();
+      return teamMapperAdapter.toCollectionModel(teamService.all());
     }else{
-      return teamService.findBy(name);
+      return teamMapperAdapter.toCollectionModel(teamService.findBy(name));
     }
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<Team> findBy(@PathVariable Integer id) {
+  public ResponseEntity<TeamResponse> findBy(@PathVariable Integer id) {
     return teamService.findBy(id)
-        .map(ResponseEntity::ok)
+        .map(team -> ResponseEntity.ok(teamMapperAdapter.toModelResponse(team)))
         .orElse(ResponseEntity.notFound().build());
   }
 
   @PostMapping
-  public ResponseEntity<Team> create(@Valid @RequestBody Team team, UriComponentsBuilder builder){
-    final Team savedTeam = teamService.save(team);
+  public ResponseEntity<TeamResponse> create(@Valid @RequestBody TeamRequest teamRequest, UriComponentsBuilder builder){
+    final Team savedTeam = teamService.save(teamMapperAdapter.toEntity(teamRequest));
     final URI uri = builder
     .path("/teams/{id}")
     .buildAndExpand(savedTeam.getId()).toUri();
-    return ResponseEntity.created(uri).body(savedTeam); 
+    return ResponseEntity.created(uri).body(teamMapperAdapter.toModelResponse(savedTeam)); 
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<Team> update(@PathVariable Integer id, @Valid @RequestBody Team team){
+  public ResponseEntity<TeamResponse> update(@PathVariable Integer id, @Valid @RequestBody TeamRequest teamRequest){
     if(teamService.teamDoesNotExist(id)){
       return ResponseEntity.notFound().build();
     } else {
-      team.setId(id);
-      Team updatedTeam = teamService.save(team);
-      return ResponseEntity.ok(updatedTeam);    
+      teamMapperAdapter.toEntity(teamRequest).setId(id);
+      Team updatedTeam = teamService.save(teamMapperAdapter.toEntity(teamRequest));
+      return ResponseEntity.ok(teamMapperAdapter.toModelResponse(updatedTeam));    
     }
   }
 

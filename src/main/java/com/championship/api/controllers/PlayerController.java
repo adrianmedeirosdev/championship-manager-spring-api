@@ -3,7 +3,10 @@ package com.championship.api.controllers;
 import java.net.URI;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,9 +14,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.championship.api.dto.input.PlayerRequest;
+import com.championship.api.dto.output.PlayerResponse;
+import com.championship.api.mapper.PlayerMapperAdapter;
 import com.championship.domain.model.Player;
 import com.championship.domain.service.PlayerService;
 
@@ -25,43 +32,57 @@ import lombok.AllArgsConstructor;
 @RequestMapping("/players")
 public class PlayerController {
   
-  @Autowired
-  private final PlayerService service;
+  
+  private final PlayerService playerService;
+  private final PlayerMapperAdapter playerMapperAdapter;
 
 
   @GetMapping
-  public List<Player> list(String name) {
+  public List<PlayerResponse> list(String name) {
     if (name == null) {
-      return service.all();
+      return playerMapperAdapter.toCollectionModel(playerService.all());
     } else {
-      return service.findBy(name);
+      return playerMapperAdapter.toCollectionModel(playerService.findBy(name));
     }
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<Player> findBy(@PathVariable Integer id) {
-    return service.findBy(id)
-        .map(ResponseEntity::ok)
+  public ResponseEntity<PlayerResponse> findBy(@PathVariable Integer id) {
+    return playerService.findBy(id)
+        .map(player -> ResponseEntity.ok(playerMapperAdapter.toModelResponse(player)))
         .orElse(ResponseEntity.notFound().build());
   }
 
+  @GetMapping("/page")
+  public Page<Player> list(@RequestParam(required = false) String name,
+      @PageableDefault(sort = "name", direction = Sort.Direction.ASC, page = 0, size = 4) Pageable pagination) {
+    if (name == null) {
+      return playerService.pagedSearch(pagination);
+    } else {
+      return playerService.findBy(name, pagination);
+    }
+  }
+
   @PostMapping
-  public ResponseEntity<Player> create(@Valid @RequestBody Player player, UriComponentsBuilder builder){
-    final Player savedPlayer = service.save(player);
+  public ResponseEntity<PlayerResponse> create(@Valid @RequestBody PlayerRequest playerRequest, UriComponentsBuilder builder) {
+    final Player savedPlayer = playerService.save(playerMapperAdapter.toEntity(playerRequest));
     final URI uri = builder
-    .path("/players/{id}")
-    .buildAndExpand(savedPlayer.getId()).toUri();
-    return ResponseEntity.created(uri).body(savedPlayer); 
+        .path("/players/{id}")
+        .buildAndExpand(savedPlayer.getId()).toUri();
+    return ResponseEntity.created(uri).body(playerMapperAdapter.toModelResponse(savedPlayer));
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<Player> update(@PathVariable Integer id, @Valid @RequestBody Player player){
-    if(service.playerDoesNotExist(id)){
+  public ResponseEntity<PlayerResponse> update(@PathVariable Integer id, @Valid @RequestBody PlayerRequest playerRequest) {
+    if (playerService.playerDoesNotExist(id)) {
       return ResponseEntity.notFound().build();
     } else {
-      player.setId(id);
-      Player updatedPlayer = service.save(player);
-      return ResponseEntity.ok(updatedPlayer);    
+      Player playerToUpdate = playerService.find(id);
+      playerToUpdate.setName(playerRequest.getName());
+      playerToUpdate.setBirth(playerRequest.getBirth());
+      playerToUpdate.setHeight(playerRequest.getHeight());
+      final Player updatedPlayer = playerService.save(playerToUpdate);
+      return ResponseEntity.ok(playerMapperAdapter.toModelResponse(updatedPlayer));
     }
   }
 

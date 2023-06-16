@@ -1,8 +1,9 @@
 create table _match (
   id integer not null auto_increment,
+  home_team_id integer null,
+  away_team_id integer null,
   _date Date,
-  hometeam_id integer not null,
-  awayteam_id integer not null,
-  championship_id integer not null,
+  _status varchar(45) null,
+  championship_id integer null,
   primary key(id)
 );

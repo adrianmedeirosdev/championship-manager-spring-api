@@ -1,5 +1,5 @@
 alter table _match add constraint fk_match_hometeam 
-    foreign key (hometeam_id) references team (id);
+    foreign key (home_team_id) references team (id);
 
 alter table _match add constraint fk_match_awayteam
-    foreign key (awayteam_id) references team (id);
+    foreign key (away_team_id) references team (id);

@@ -21,18 +21,18 @@ public class Championship {
   private Integer id;
 
   @NotNull
-@Column(name = "_year")
+  @Column(name = "_year")
   private Integer year;
 
   @NotBlank @Size(min = 2, max = 45)
   @Column(name = "_name")
   private String name;
   
-  @NotNull
+  
   @ManyToMany
   private List<Team> teams = new ArrayList<>();
 
-  @NotNull
+ 
   @OneToMany(mappedBy = "championship")
   private List<Match> matches = new ArrayList<>();
 

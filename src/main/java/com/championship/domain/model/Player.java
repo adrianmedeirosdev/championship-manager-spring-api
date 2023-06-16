@@ -31,10 +31,8 @@ public class Player {
   private String gender;
   
   @NotNull @Positive @Min(value = (long) 1.2)
-  private float height;
+  private Float height;
+  
 
-  @NotNull
-  @ManyToOne
-  private Team team;
 
 }
